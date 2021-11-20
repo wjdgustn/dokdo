@@ -1,8 +1,9 @@
 module.exports = class System {
   /**
-    * Get memory info
-    * @returns {NodeJS.MemoryUsage}
-    */
+   * Get memory info
+   *
+   * @returns {NodeJS.MemoryUsage}
+   */
   static memory () {
     const memory = process.memoryUsage()
     const keys = Object.keys(memory)
@@ -17,6 +18,6 @@ module.exports = class System {
   }
 
   static processReadyAt () {
-    return new Date(new Date() - process.uptime() * 1000)
+    return new Date(Date.now() - process.uptime() * 1000)
   }
 }

@@ -1,4 +1,6 @@
 node_modules/
 config.js
-package-lock.json
+package-lock.json # we are using yarn
 .vscode/
+.DS_Store
+.idea/
