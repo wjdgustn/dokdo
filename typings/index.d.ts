@@ -1,5 +1,5 @@
 declare module 'dokdo' {
-  import * as Discord from 'discord.js'
+  import type * as Discord from 'discord.js'
   export default Dokdo
 
   class Dokdo {
@@ -12,6 +12,7 @@ declare module 'dokdo' {
   interface DokdoOptions {
     aliases?: string[]
     owners?: string[]
+    isOwner(user: Discord.User): boolean|Promise<boolean>
     prefix?: string
     secrets?: any[]
     globalVariable?: Record<string, any>
