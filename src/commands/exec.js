@@ -9,7 +9,7 @@ module.exports = async function Exec (message, parent) {
   console.log(shell)
   if (!shell) return message.channel.send('Sorry, we are not able to find your default shell.\nPlease set `process.env.SHELL`.')
 
-  const msg = new ProcessManager(message, `$ ${message.data.args}\n`, parent, { lang: 'bash' })
+  const msg = new ProcessManager(message, `$ ${message.data.args}\n`, parent, { lang: 'ansi' })
   await msg.init()
 
   const res = child.spawn(shell, ['-c', (shell === 'win32' ? 'chcp 65001\n' : '') + message.data.args], { encoding: 'utf8' })
