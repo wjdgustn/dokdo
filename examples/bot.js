@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
-const client = new Discord.Client({ intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES'] })
+
+const client = new Discord.Client({ intents: ['Guilds', 'GuildMembers', 'GuildMessages', 'MessageContent'] })
 const config = require('./config')
 
 const Dokdo = require('../src')

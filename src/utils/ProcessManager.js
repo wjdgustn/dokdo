@@ -3,6 +3,8 @@ const Discord = require('discord.js')
 const Dokdo = require('../') // eslint-disable-line no-unused-vars
 const codeBlock = require('./codeBlock')
 const regexpEscape = require('./regexpEscape')
+const { splitMessage } = require('../polyfill')
+
 /**
  * @typedef {Dokdo} Dokdo
  */
@@ -25,7 +27,7 @@ const regexpEscape = require('./regexpEscape')
 
 /**
  * @typedef Action
- * @property {Discord.MessageButton} button
+ * @property {Discord.ButtonBuilder} button
  * @property {onAction} action
  * @property {boolean} [requirePage]
  */
@@ -39,6 +41,16 @@ const regexpEscape = require('./regexpEscape')
    * @param {ProcessManagerOptions} options
    */
 module.exports = class ProcessManager {
+  /**
+   * @type {Discord.Message}
+   */
+  message
+
+  /**
+   * @type {Discord.User}
+   */
+  author
+
   constructor (message, content, dokdo, options = {}) {
     this.target = message.channel
     this.dokdo = dokdo
@@ -75,11 +87,10 @@ module.exports = class ProcessManager {
     this.args.manager = this
 
     this.createMessageComponentMessage()
-    this.messageComponentCollector =
-    this.message.createMessageComponentCollector({ filter: (interaction) => this.actions.find(e => e.button.customId === interaction.customId) && interaction.user.id === this.author.id, time: 300000, error: ['time'], dispose: true })
+    this.messageComponentCollector = this.message.createMessageComponentCollector({ filter: (interaction) => this.actions.find(e => e.button.data.custom_id === interaction.customId) && interaction.user.id === this.author.id, time: 300000, error: ['time'], dispose: true })
 
     this.messageComponentCollector.on('collect', component => {
-      const event = this.actions.find(e => e.button.customId === component.customId)
+      const event = this.actions.find(e => e.button.data.custom_id === component.customId)
       if (!event) return
       component.deferUpdate()
       event.action(this.args)
@@ -95,7 +106,7 @@ module.exports = class ProcessManager {
     const buttons = this.actions.filter(el => !(el.requirePage && this.splitted.length <= 1))
       .map(el => el.button)
     if (buttons.length <= 0) return
-    const actionRow = new Discord.MessageActionRow({ components: buttons })
+    const actionRow = new Discord.ActionRowBuilder({ components: buttons })
     this.message.edit({ components: [actionRow] })
   }
 
@@ -172,6 +183,6 @@ module.exports = class ProcessManager {
   }
 
   splitContent () {
-    return Discord.Util.splitMessage(this.content, { maxLength: this.limit, char: [new RegExp(`.{1,${this.limit}}`, 'g'), '\n'] })
+    return splitMessage(this.content, { maxLength: this.limit, char: [new RegExp(`.{1,${this.limit}}`, 'g'), '\n'] })
   }
 }
